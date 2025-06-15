@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>শুভ জন্মদিন!</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f3e9; /* নরম ক্রিম ব্যাকগ্রাউন্ড */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* আতশবাজির জন্য ওভারফ্লো লুকানো */
+            transition: background-color 1s ease-in-out;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* কেক স্টাইলিং */
+        .cake-container {
+            position: relative;
+            margin-bottom: 2rem;
+            transform: scale(0.8); /* ভালো ফিটের জন্য প্রাথমিক আকার সামঞ্জস্য করুন */
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            opacity: 1;
+        }
+
+        .cake-layer {
+            width: 250px; /* মূল প্রস্থ */
+            height: 80px;
+            background-color: #f0c27b; /* কেকের রঙ */
+            border-radius: 50% / 10%;
+            position: relative;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: -30px; /* লেয়ারগুলির ওভারল্যাপ */
+        }
+
+        .cake-layer:nth-child(2) {
+            width: 200px;
+            height: 70px;
+            background-color: #e6a86c;
+        }
+
+        .cake-layer:nth-child(3) {
+            width: 150px;
+            height: 60px;
+            background-color: #d18d5b;
+        }
+
+        .icing {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background-color: #ffde59; /* আইসিং এর রঙ */
+            border-radius: 50% / 10%;
+            transform: translateY(-50%);
+            box-shadow: inset 0 -3px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* মোমবাতি স্টাইলিং */
+        .candles-container {
+            position: absolute;
+            top: -20px; /* উপরের লেয়ারের উপরে অবস্থান */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px; /* মোমবাতির মধ্যে ফাঁকা স্থান */
+        }
+
+        .candle {
+            width: 15px;
+            height: 60px;
+            background-color: #ff6b6b; /* লাল মোমবাতি */
+            border-radius: 5px;
+            position: relative;
+            cursor: pointer;
+            box-shadow: inset 0 -3px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .candle.extinguished {
+            background-color: #b0b0b0; /* নিভে গেলে ধূসর */
+        }
+
+        .wick {
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 8px;
+            background-color: #353535;
+            border-radius: 2px;
+        }
+
+        .flame {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 25px;
+            background-color: #ffcc00; /* হলুদ শিখা */
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            box-shadow: 0 0 10px 5px rgba(255, 204, 0, 0.7);
+            animation: flicker 0.5s infinite alternate;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .flame.hidden {
+            opacity: 0;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scaleY(1); box-shadow: 0 0 10px 5px rgba(255, 204, 0, 0.7); }
+            50% { transform: translateX(-50%) scaleY(0.95); box-shadow: 0 0 12px 6px rgba(255, 204, 0, 0.8); }
+            100% { transform: translateX(-50%) scaleY(1); box-shadow: 0 0 10px 5px rgba(255, 204, 0, 0.7); }
+        }
+
+        .message {
+            font-size: 1.5rem;
+            color: #333;
+            text-align: center;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .hidden {
+            display: none !important;
+            opacity: 0;
+        }
+
+        /* জন্মদিনের শুভেচ্ছা স্টাইলিং */
+        .birthday-wish-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: rgb(198, 227, 14);
+            font-size: 4rem;
+            font-weight:bolder ;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 5;
+            background: radial-gradient(circle, #f51b52, #000033); /* গাঢ় তারার পটভূমি */
+        }
+
+        .birthday-wish-container.active {
+            opacity: 1;
+        }
+
+        /* আতশবাজি স্টাইলিং */
+        .fireworks-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ফায়ারওয়ার্কের প্রতিটি কণার অ্যানিমেশন */
+        .firework-particle {
+            animation: firework-explode-animation 1.5s ease-out forwards var(--animation-delay);
+        }
+
+        @keyframes firework-explode-animation {
+            0% {
+                transform: translate(0, 0) scale(0.5); /* শুরু হবে বিস্ফোরণ কেন্দ্র থেকে */
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--end-x), var(--end-y)) scale(0); /* বাইরের দিকে যাবে এবং অদৃশ্য হবে */
+                opacity: 0;
+            }
+        }
+
+        /* রেসপনসিভ ডিজাইন */
+        @media (max-width: 768px) {
+            .cake-layer {
+                width: 200px;
+                height: 70px;
+            }
+            .cake-layer:nth-child(2) {
+                width: 160px;
+                height: 60px;
+            }
+            .cake-layer:nth-child(3) {
+                width: 120px;
+                height: 50px;
+            }
+            .candle {
+                width: 12px;
+                height: 50px;
+            }
+            .flame {
+                width: 12px;
+                height: 20px;
+            }
+            .message {
+                font-size: 1.2rem;
+            }
+            .birthday-wish-container {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cake-container" id="cakeContainer">
+            <div class="cake-layer relative">
+                <div class="icing"></div>
+            </div>
+            <div class="cake-layer relative">
+                <div class="icing"></div>
+            </div>
+            <div class="cake-layer relative">
+                <div class="icing"></div>
+            </div>
+            <div class="candles-container">
+                <div class="candle" data-candle-id="1">
+                    <div class="wick"></div>
+                    <div class="flame"></div>
+                </div>
+                <div class="candle" data-candle-id="2">
+                    <div class="wick"></div>
+                    <div class="flame"></div>
+                </div>
+                <div class="candle" data-candle-id="3">
+                    <div class="wick"></div>
+                    <div class="flame"></div>
+                </div>
+                <div class="candle" data-candle-id="4">
+                    <div class="wick"></div>
+                    <div class="flame"></div>
+                </div>
+            </div>
+        </div>
+        <p class="message text-gray-700 font-semibold" id="blowOutMessage">মমবাতিতে চাপ দিয়ে নিভাও</p>
+    </div>
+
+    <div class="birthday-wish-container hidden" id="birthdayWishContainer">
+        <h1 class="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl">শুভ জন্মদিন Tasnim!</h1>
+        <p class="text-white text-lg sm:text-xl md:text-2xl mt-4">তুমার জন্য অসংখ শুভ কামনা ও ভালোবাসা রইলো </p>
+    </div>
+
+    <div class="fireworks-container" id="fireworksContainer"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const candles = document.querySelectorAll('.candle');
+            const cakeContainer = document.getElementById('cakeContainer');
+            const blowOutMessage = document.getElementById('blowOutMessage');
+            const birthdayWishContainer = document.getElementById('birthdayWishContainer');
+            const fireworksContainer = document.getElementById('fireworksContainer');
+            let extinguishedCount = 0;
+
+            // একটি র্যান্ডম রঙ তৈরি করার ফাংশন
+            function getRandomColor() {
+                const letters = '0123456789ABCDEF';
+                let color = '#';
+                for (let i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+            // একটি একক আতশবাজি বিস্ফোরণ তৈরি করার ফাংশন
+            function createFirework() {
+                const explosionX = Math.random() * window.innerWidth; // বিস্ফোরণের জন্য র্যান্ডম X স্থানাঙ্ক
+                const explosionY = Math.random() * window.innerHeight * 0.7 + window.innerHeight * 0.15; // বিস্ফোরণের জন্য র্যান্ডম Y স্থানাঙ্ক, খুব উপরে/নীচে এড়িয়ে চলুন
+
+                const numParticles = 40; // প্রতিটি আতশবাজির জন্য কণার সংখ্যা
+                const maxSpread = 150; // কণাগুলির সর্বোচ্চ বিস্তারের দূরত্ব
+
+                for (let i = 0; i < numParticles; i++) {
+                    const particle = document.createElement('span');
+                    particle.style.position = 'absolute';
+                    particle.style.width = '5px';
+                    particle.style.height = '5px';
+                    particle.style.borderRadius = '50%';
+                    particle.style.backgroundColor = getRandomColor();
+
+                    // কণার প্রাথমিক অবস্থান বিস্ফোরণ কেন্দ্রের সাথে সেট করুন
+                    particle.style.left = `${explosionX}px`;
+                    particle.style.top = `${explosionY}px`;
+
+                    // কণার জন্য র্যান্ডম শেষ অবস্থান গণনা করুন
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * maxSpread;
+                    const endX = explosionX + Math.cos(angle) * distance;
+                    const endY = explosionY + Math.sin(angle) * distance;
+
+                    // CSS অ্যানিমেশনের জন্য শেষ অবস্থান সংরক্ষণের জন্য কাস্টম প্রপার্টি প্রয়োগ করুন
+                    particle.style.setProperty('--end-x', `${endX - explosionX}px`); // আপেক্ষিক চলাচল
+                    particle.style.setProperty('--end-y', `${endY - explosionY}px`); // আপেক্ষিক চলাচল
+                    particle.style.setProperty('--animation-delay', `${Math.random() * 0.15}s`); // বিস্ফোরণের মধ্যে প্রতিটি কণার জন্য সামান্য বিলম্ব
+
+                    particle.classList.add('firework-particle'); // CSS অ্যানিমেশনের জন্য ক্লাস যোগ করুন
+
+                    fireworksContainer.appendChild(particle);
+
+                    // অ্যানিমেশন শেষ হওয়ার পর কণাটি সরান
+                    setTimeout(() => {
+                        particle.remove();
+                    }, 1500); // CSS থেকে মোট অ্যানিমেশন সময়
+                }
+            }
+
+            // আতশবাজি শুরু করার ফাংশন
+            function startFireworks() {
+                setInterval(createFirework, 300); // প্রতি 300ms এ একটি নতুন আতশবাজি তৈরি করুন
+            }
+
+            candles.forEach(candle => {
+                candle.addEventListener('click', () => {
+                    const flame = candle.querySelector('.flame');
+                    if (!flame.classList.contains('hidden')) {
+                        flame.classList.add('hidden');
+                        candle.classList.add('extinguished');
+                        extinguishedCount++;
+
+                        if (extinguishedCount === candles.length) {
+                            // সব মোমবাতি নিভে গেলে
+                            cakeContainer.style.transform = 'scale(0)';
+                            cakeContainer.style.opacity = '0';
+                            blowOutMessage.style.opacity = '0';
+
+                            // কেক ফেড আউট হওয়ার পর, জন্মদিনের শুভেচ্ছা দেখান এবং আতশবাজি শুরু করুন
+                            setTimeout(() => {
+                                cakeContainer.classList.add('hidden');
+                                blowOutMessage.classList.add('hidden');
+                                birthdayWishContainer.classList.remove('hidden');
+                                birthdayWishContainer.classList.add('active');
+                                startFireworks(); // আতশবাজি শুরু করুন
+                            }, 500); // কেক ফেড আউট হওয়ার জন্য অপেক্ষা করুন
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
